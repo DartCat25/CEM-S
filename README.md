@@ -15,6 +15,10 @@ Model has no limits in size and rotations but you should consider that entity cu
 May be used on any mobs, block enities (like chests, beds, bells, etc.), armors, trims, arrows, tridents, etc.
 
 # Implementation (how to use)
+Firstly, set shaders:
+1) Create minecraft/shaders and put `include` into it from this repository.
+2) Create minecraft/shaders/core and put changable shaders into it. (shaders list is [here](https://github.com/McTsts/Minecraft-Shaders-Wiki/blob/main/Core%20Shader%20List.md), take it from vanilla jar or any other place)
+
 To make base, add `includes`, base `cem_` variables and constructions:
 
 ### Vertex
