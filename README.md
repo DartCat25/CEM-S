@@ -5,7 +5,7 @@
 
 Pack adds primitive implementation of CEM on vanilla shaders.
 
-It ables to render geometry in fragment as there is a way to TBN matrix in it, finally.
+It ables to render geometry in fragment as there is a way to get TBN matrix in it, finally.
 
 ## Features
 It applies features to add or change geometry of entities with done functions `ADD_BOX`, `ADD_BOX_ROTATE` and `ADD_SQUARE` but you can add any [intersector function](https://iquilezles.org/articles/intersectors/) or even other techniques like raymarching.
