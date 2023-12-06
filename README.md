@@ -3,7 +3,7 @@
 <img src="img/img0.png" height=200px>
 <img src="img/pack.png" height=200px>
 
-Pack adds primitive implementation of CEM on vanilla shaders.
+Pack adds primitive implementation of CEM on vanilla shaders. Proof of Concept with working example.
 
 It ables to render geometry in fragment as there is a way to get TBN matrix in it, finally.
 
