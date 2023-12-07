@@ -1,4 +1,4 @@
-# CEM-S: Custom Entity Models with shaders
+# CEM-S: Custom Entity Models with Shaders
 
 <img src="img/img0.png" height=200px>
 <img src="img/pack.png" height=200px>
