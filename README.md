@@ -50,6 +50,10 @@ if (cem != 0) //Setup CEM model
 
 ### Fragment
 ```glsl
+//Add to uniforms
+uniform mat4 ModelViewMat;
+uniform mat4 ProjMat;
+
 //Right before main()
 #moj_import <cem/frag_funcs.glsl>
 
