@@ -228,7 +228,8 @@ Mods compatibility:
 
 ## Known Issues
 - Bobbing distortions (troubleshooting: switching out bobbing)
-- Weird detph when camera is in box
+- Weird depth when camera is in box
+- Doesn't work in gui
 
 # Contributions, sources and licensing
 https://iquilezles.org/articles/intersectors/
