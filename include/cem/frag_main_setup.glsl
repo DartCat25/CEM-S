@@ -35,14 +35,14 @@ vec2 UV2 = round(cem_uv2.xy / cem_uv2.z);
 vec2 stp = min(UV1, UV2);
 vec2 res = abs(UV1 - UV2);
 
-vec3 center = ((Pos1 + Pos2) / 2) * TBN;
+vec3 rawCenter = (Pos1 + Pos2) / 2;
+vec3 center = rawCenter * TBN;
 vec3 dir = normalize(cem_glPos);
 vec3 dirTBN = normalize(cem_glPos * TBN);
 
 if (ProjMat[3][0] == -1)
 {
-    vec3 cent = (Pos1 + Pos2) / 2;
-    center = vec3(-cem_glPos.xy + cent.xy, cent.z - 5000 * sin(GameTime * 1000)) * TBN;
+    center = vec3(-cem_glPos.xy + rawCenter.xy, rawCenter.z) * TBN;
     dir = vec3(0, 0, -1);
     dirTBN = normalize(dir * TBN);
 }
