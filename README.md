@@ -45,7 +45,7 @@ if (texelFetch(Sampler0, ivec2(31, 0), 0) * 255 == vec4(0, 0, 1, 255)) //Arrow
 ```
 
 #### UV0 and gl_VertexID detection
-To find specific model *element* (face of model part, for whole ), you need to find specific **UV** and/or **vertices ID** (both in one gives more precise detection)
+To find specific model *element* (face of model part, you need only one face for whole model's bone), you need to find specific **UV** and/or **vertices ID** (both in one gives more precise detection)
 
 **Odd UV detection**  
 For non-atlas texture, you can use this odd form of detection of UV:
