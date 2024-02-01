@@ -154,7 +154,7 @@ Also there is useful rotation function in `matf.glsl` like `Rotation3(angle(rad)
 
 ##### Hope this doc helped.
 
-# Compatibility (DIDN'T TESTED)
+# Compatibility (DIDN'T TEST)
 Most example packs probably work in 1.18.2 and above (may cause vertex reordering issues, but it's fixable).
 
 Code snippets probably may work in 1.17 and above.
