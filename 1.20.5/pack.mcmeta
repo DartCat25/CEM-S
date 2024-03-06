@@ -1,0 +1,11 @@
+{
+	"pack": {
+		"pack_format": 25,
+		"supported_formats": [ 25, 1000 ],
+		"description":
+		{
+			"text":"By DartCat25",
+			"bold": false
+		}
+	}
+}

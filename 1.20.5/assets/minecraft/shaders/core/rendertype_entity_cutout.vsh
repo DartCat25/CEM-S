@@ -1,0 +1,118 @@
+#version 150
+
+#moj_import <light.glsl>
+#moj_import <fog.glsl>
+
+in vec3 Position;
+in vec4 Color;
+in vec2 UV0;
+in ivec2 UV1;
+in ivec2 UV2;
+in vec3 Normal;
+
+uniform sampler2D Sampler0;
+uniform sampler2D Sampler1;
+uniform sampler2D Sampler2;
+
+uniform mat4 ModelViewMat;
+uniform mat4 ProjMat;
+uniform int FogShape;
+
+uniform vec3 Light0_Direction;
+uniform vec3 Light1_Direction;
+
+out float vertexDistance;
+out vec4 vertexColor;
+out vec4 lightMapColor;
+out vec4 overlayColor;
+out vec2 texCoord0;
+out vec4 normal;
+
+out vec4 cem_pos1, cem_pos2, cem_pos3, cem_pos4;
+out vec3 cem_glPos;
+out vec3 cem_uv1, cem_uv2;
+out vec4 cem_lightMapColor;
+flat out int cem;
+flat out int cem_reverse;
+
+void main() {
+    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+
+    vertexDistance = fog_distance(Position, FogShape);
+    vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+    lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+    overlayColor = texelFetch(Sampler1, UV1, 0);
+    texCoord0 = UV0;
+    normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+
+    const vec2[4] corners = vec2[4](vec2(0), vec2(0, 1), vec2(1, 1), vec2(1, 0));
+    vec2 corner = corners[gl_VertexID % 4];
+
+    vec2 texSize = textureSize(Sampler0, 0);
+    vec2 uv = floor(UV0 * texSize);
+
+    cem_pos1 = cem_pos2 = cem_pos3 = cem_pos4 = vec4(0);
+    cem_uv1 = cem_uv2 = vec3(0);
+    cem = cem_reverse = 0;
+    float cem_size = 1;
+
+    float atlasAlpha1 = texelFetch(Sampler0, ivec2(uv - corners[(gl_VertexID + 1) % 4]), 0).a * 255;
+    float atlasAlpha3 = texelFetch(Sampler0, ivec2(uv - corners[(gl_VertexID + 3) % 4]), 0).a * 255;
+
+    if (texelFetch(Sampler0, ivec2(31, 0), 0) * 255 == vec4(0, 0, 1, 255)) //Arrow
+    {
+        if (uv - corners[(gl_VertexID) % 4].yx * ivec2(16, 5) == vec2(0) && gl_VertexID / 4 % 3 == 1)
+        {
+            cem = 1;
+            cem_reverse = 1;
+            corner = corners[(gl_VertexID) % 4].yx;
+            cem_size = 1;
+        }
+        else
+        {
+            gl_Position = vec4(0);
+        }
+    }
+    else if ((atlasAlpha1 == 242 || atlasAlpha3 == 242) && ProjMat[3][0] != -1 && gl_VertexID / 4 % (6 * 3) == 5) //Christmas chest
+    {
+        cem = 2;
+        cem_reverse = 1;
+        corner = corners[(gl_VertexID) % 4].yx;
+        cem_size = 1;
+    }
+    else if ((atlasAlpha1 == 243 || atlasAlpha3 == 243) && ProjMat[3][0] != -1) //Christmas chest
+    {
+        if (gl_VertexID / 4 % (6 * 3) == 11)
+        {
+            cem = 3;
+            vertexColor = vec4(1, 0, 1, 1);
+            cem_reverse = 1;
+            corner = corners[(gl_VertexID) % 4].yx;
+            cem_size = 1;
+        }
+        else
+        {
+            gl_Position = vec4(0);
+        }
+    }
+    else if ((atlasAlpha1 == 244 || atlasAlpha3 == 244) && ProjMat[3][0] != -1) //Christmas chest
+    {
+        if (gl_VertexID / 4 % (6 * 3) == 11)
+        {
+            vertexColor = vec4(1, 0, 1, 1);
+            cem = 4;
+            cem_reverse = 1;
+            corner = corners[(gl_VertexID) % 4].yx;
+            cem_size = 1;
+        }
+        else
+        {
+            gl_Position = vec4(0);
+        }
+    }
+
+    if (cem != 0) //Setup CEM model
+    {
+        #moj_import <cem/vert_setup.glsl>
+    }
+}
