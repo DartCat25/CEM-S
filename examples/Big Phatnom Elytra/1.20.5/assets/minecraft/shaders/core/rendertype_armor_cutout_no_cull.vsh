@@ -30,8 +30,6 @@ out vec4 normal;
 flat out int armorType;
 flat out vec4 tint;
 
-flat out int isGui;
-
 out vec4 cem_pos1, cem_pos2, cem_pos3, cem_pos4;
 out vec3 cem_glPos;
 out vec3 cem_uv1, cem_uv2;
@@ -41,11 +39,9 @@ flat out int cem_reverse;
 flat out vec4 cem_light;
 
 void main() {
-    isGui = int(ProjMat[3][0] == -1);
-
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
     texCoord0 = UV0;
-    vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+    vertexDistance = fog_distance(Position, FogShape);
     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
 
     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);

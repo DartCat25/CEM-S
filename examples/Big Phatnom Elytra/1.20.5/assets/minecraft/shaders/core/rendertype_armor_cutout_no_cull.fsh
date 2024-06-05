@@ -17,16 +17,12 @@ uniform float FogStart;
 uniform float FogEnd;
 uniform vec4 FogColor;
 
-uniform mat3 IViewRotMat;
-
 uniform float GameTime;
 
 in float vertexDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
 in vec4 normal;
-
-flat in int isGui;
 
 out vec4 fragColor;
 
@@ -51,7 +47,7 @@ void main() {
             case 2:
             {
                 modelSize /= 12;
-                float angle = isGui == 0 ? (IViewRotMat * TBN * vec3(0, 1, 0)).y : (TBN * vec3(0, 1, 0)).y;
+                float angle = (TBN * vec3(0, 1, 0)).y;
                 float controller = -pow(-min(angle, 0), 0.8) * 0.7;
                 // float flapController = clamp(0.5 - abs(angle - 0.25), 0, 0.5);
                 // float flapTime = GameTime * 15000;

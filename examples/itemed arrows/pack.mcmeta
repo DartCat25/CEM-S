@@ -1,10 +1,21 @@
 {
 	"pack": {
 		"pack_format": 15,
+		"supported_formats": [ 15, 1000 ],
 		"description":
 		{
 			"text":"By DartCat25",
 			"bold": false
 		}
+	},
+	"overlays":
+	{
+		"entries":
+		[
+			{
+				"directory": "1.20.5",
+				"formats": [ 25, 1000 ]
+			}
+		]
 	}
 }
