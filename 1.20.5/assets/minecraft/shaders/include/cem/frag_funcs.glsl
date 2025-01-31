@@ -29,6 +29,10 @@ color = sBox(Rotation * (-center + (pos + rotPivot) * modelSize) - rotPivot * mo
 #define ADD_QUAD(p1, p2, p3, p4, uv) { \
 }
 
+#define ADD_BOX_EXT(pos, size, dSide, uSide, nSide, eSide, sSide, wSide) { \
+color = sBoxExt(-center + pos * modelSize, dirTBN, size * modelSize, TBN, color, minT, dSide, uSide, nSide, wSide, sSide, eSide);\
+}
+
 vec3 planeIntersect( in vec3 ro, in vec3 rd, in vec3 v0, in vec3 v1, in vec3 v2 )
 {
     vec3 v1v0 = v1 - v0;
@@ -86,6 +90,31 @@ vec3 boxIntersect(vec3 ro, vec3 rd, vec3 size, out vec3 outNormal)
         tex = pos.xy;
 
     return vec3(clamp(tex / 2 + 0.5, vec2(0), vec2(1)), t);
+}
+
+vec3 boxIntersectInv(vec3 ro, vec3 rd, vec3 size, out vec3 outNormal)
+{
+    vec3 m = 1.0 / rd;
+    vec3 n = m * ro;
+    vec3 k = abs(m) * size;
+    vec3 t1 = -n - k;
+    vec3 t2 = -n + k;
+    float tN = max( max( t1.x, t1.y ), t1.z );
+    float tF = min( min( t2.x, t2.y ), t2.z );
+    if( tN > tF || tF < 0.0) return vec3(MAX_DEPTH);
+
+    outNormal = sign(rd)*step(t2.xyz,t2.yzx)*step(t2.xyz,t2.zxy);
+
+    vec3 pos = (ro + rd * tF) / size;
+    vec2 tex = vec2(0);
+    if (abs(outNormal.x) > 0.9)
+        tex = pos.zy;
+    else if (abs(outNormal.y) > 0.9)
+        tex = pos.xz;
+    else if (abs(outNormal.z) > 0.9)
+        tex = pos.xy;
+
+    return vec3(clamp(tex / 2 + 0.5, vec2(0), vec2(1)), tF);
 }
 
 void writeDepth(vec3 Pos)
@@ -174,6 +203,84 @@ vec4 sBox(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4
     {
         col = texture(Sampler0, (dSide.xy + dSide.zw * box.xy) / texSize);
     }
+
+    col = minecraft_mix_light(Light0_Direction, Light1_Direction, normalize(TBN * normal), col);
+
+    if (col.a < 0.1) return color;
+
+    T = box.z;
+
+    return col;
+}
+
+vec4 sBoxExt(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4 dSide, vec4 uSide, vec4 nSide, vec4 eSide, vec4 sSide, vec4 wSide)
+{
+    vec2 texSize = textureSize(Sampler0, 0);
+    vec3 normal = vec3(0);
+
+    vec3 box = boxIntersect(ro, rd, size, normal);
+
+    if (box.z >= T)
+        return color;
+
+    vec4 col = vec4(0);
+
+    if (normal.x > 0.9 && eSide != vec4(0)) //East
+    {
+        col = texture(Sampler0, (eSide.xy + eSide.zw * box.xy) / texSize);
+    }
+    else if (normal.x < -0.9 && wSide != vec4(0)) //West
+    {
+        col = texture(Sampler0, (wSide.xy + wSide.zw * vec2(1 - box.x, box.y)) / texSize);
+    }
+    else if (normal.z > 0.9 && sSide != vec4(0)) //South
+    {
+        col = texture(Sampler0, (sSide.xy + sSide.zw * vec2(1 - box.x, box.y)) / texSize);
+    }
+    else if (normal.z < -0.9 && nSide != vec4(0)) //North
+    {
+        col = texture(Sampler0, (nSide.xy + nSide.zw * box.xy) / texSize);
+    }
+    else if (normal.y < -0.9 && uSide != vec4(0)) //Up
+    {
+        col = texture(Sampler0, (uSide.xy + uSide.zw * box.xy) / texSize);
+    }
+    else if (normal.y > 0.9 && dSide != vec4(0)) //Down
+    {
+        col = texture(Sampler0, (dSide.xy + dSide.zw * box.xy) / texSize);
+    }
+
+    if (col.a < 0.1)
+    {
+        box = boxIntersectInv(ro, rd, size, normal);
+
+
+        if (normal.x > 0.9 && eSide != vec4(0)) //East
+        {
+            col = texture(Sampler0, (eSide.xy + eSide.zw * box.xy) / texSize);
+        }
+        else if (normal.x < -0.9 && wSide != vec4(0)) //West
+        {
+            col = texture(Sampler0, (wSide.xy + wSide.zw * vec2(1 - box.x, box.y)) / texSize);
+        }
+        else if (normal.z > 0.9 && sSide != vec4(0)) //South
+        {
+            col = texture(Sampler0, (sSide.xy + sSide.zw * vec2(1 - box.x, box.y)) / texSize);
+        }
+        else if (normal.z < -0.9 && nSide != vec4(0)) //North
+        {
+            col = texture(Sampler0, (nSide.xy + nSide.zw * box.xy) / texSize);
+        }
+        else if (normal.y < -0.9 && uSide != vec4(0)) //Up
+        {
+            col = texture(Sampler0, (uSide.xy + uSide.zw * box.xy) / texSize);
+        }
+        else if (normal.y > 0.9 && dSide != vec4(0)) //Down
+        {
+            col = texture(Sampler0, (dSide.xy + dSide.zw * box.xy) / texSize);
+        }
+    }
+
 
     col = minecraft_mix_light(Light0_Direction, Light1_Direction, normalize(TBN * normal), col);
 

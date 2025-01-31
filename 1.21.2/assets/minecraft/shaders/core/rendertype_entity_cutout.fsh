@@ -45,7 +45,7 @@ void main() {
             {
                 modelSize /= 4;
                 //Rotate boxes
-                mat3 rotMat = Rotate3(PI / 4, Z) * Rotate3(-PI / 4, X);
+                mat3 rotMat = Rotate3(-PI / 4 * 3, Z) * Rotate3(PI / 4 * 3, X);
 
                 center = rotMat * center;
                 dirTBN = rotMat * dirTBN;

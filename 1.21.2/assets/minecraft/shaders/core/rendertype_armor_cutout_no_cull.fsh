@@ -121,8 +121,10 @@ void main() {
                 dirTBN.x *= -1;
             case 4:
             {
+                center.y *= -1;
+                dirTBN.y *= -1;
                 modelSize /= 12;
-                float angle = (TBN * vec3(0, 1, 0)).y;
+                float angle = (TBN * vec3(0, -1, 0)).y;
                 float controller = -pow(-min(angle, 0), 0.8) * 0.7;
                 float flapController = clamp(0.5 - abs(angle - 0.25), 0, 0.5);
                 float flapTime = GameTime * 15000;
