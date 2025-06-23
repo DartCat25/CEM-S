@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.layout": "xml",
+        "armor_stand": "cpp"
+    }
+}
