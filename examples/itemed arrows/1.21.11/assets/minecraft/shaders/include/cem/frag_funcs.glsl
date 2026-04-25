@@ -69,7 +69,7 @@ vec3 boxIntersect(vec3 ro, vec3 rd, vec3 size, out vec3 outNormal)
 
 void writeDepth(vec3 Pos)
 {
-    vec4 ProjPos = ProjMat * ModelViewMat * vec4(Pos, 1);
+    vec4 ProjPos = ProjMat * ModelViewMat * vec4(Pos, 1.0);
     gl_FragDepth = ProjPos.z / ProjPos.w * 0.5 + 0.5;
 }
 
@@ -132,3 +132,4 @@ vec4 sBox(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4
 
     return col;
 }
+
