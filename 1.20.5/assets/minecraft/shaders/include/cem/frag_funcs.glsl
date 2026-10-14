@@ -18,19 +18,19 @@ flat in vec4 cem_light;
 color = sSquare(-center, dirTBN, p1 * modelSize, p2 * modelSize, p3 * modelSize, vertexColor, color, minT, uv);\
 }
 
-#define ADD_BOX(pos, size, dSide, uSide, nSide, eSide, sSide, wSide) { \
-color = sBox(-center + pos * modelSize, dirTBN, size * modelSize, TBN, color, minT, dSide, uSide, nSide, wSide, sSide, eSide);\
+#define ADD_BOX(pos, size, down, up, north, east, south, west) { \
+color = sBox(-center + pos * modelSize, dirTBN, size * modelSize, TBN, color, minT, down, up, north, west, south, east);\
 }
 
-#define ADD_BOX_ROTATE(pos, size, Rotation, rotPivot, dSide, uSide, nSide, eSide, sSide, wSide) { \
-color = sBox(Rotation * (-center + (pos + rotPivot) * modelSize) - rotPivot * modelSize, Rotation * dirTBN, size * modelSize, TBN * inverse(Rotation), color, minT, dSide, uSide, nSide, wSide, sSide, eSide); \
+#define ADD_BOX_ROTATE(pos, size, Rotation, rotPivot, down, up, north, east, south, west) { \
+color = sBox(Rotation * (-center + (pos + rotPivot) * modelSize) - rotPivot * modelSize, Rotation * dirTBN, size * modelSize, TBN * inverse(Rotation), color, minT, down, up, north, west, south, east); \
 }
 
 #define ADD_QUAD(p1, p2, p3, p4, uv) { \
 }
 
-#define ADD_BOX_EXT(pos, size, dSide, uSide, nSide, eSide, sSide, wSide) { \
-color = sBoxExt(-center + pos * modelSize, dirTBN, size * modelSize, TBN, color, minT, dSide, uSide, nSide, wSide, sSide, eSide);\
+#define ADD_BOX_EXT(pos, size, down, up, north, east, south, west) { \
+color = sBoxExt(-center + pos * modelSize, dirTBN, size * modelSize, TBN, color, minT, down, up, north, west, south, east);\
 }
 
 vec3 planeIntersect( in vec3 ro, in vec3 rd, in vec3 v0, in vec3 v1, in vec3 v2 )
@@ -167,7 +167,7 @@ vec4 sQuad(vec3 ro, vec3 rd, float modelSize, vec3 p1, vec3 p2, vec3 p3, vec3 p4
     return color;
 }
 
-vec4 sBox(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4 dSide, vec4 uSide, vec4 nSide, vec4 eSide, vec4 sSide, vec4 wSide)
+vec4 sBox(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4 down, vec4 up, vec4 north, vec4 east, vec4 south, vec4 west)
 {
     vec2 texSize = textureSize(Sampler0, 0);
     vec3 normal = vec3(0);
@@ -179,29 +179,29 @@ vec4 sBox(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4
 
     vec4 col = vec4(0);
 
-    if (normal.x > 0.9 && eSide != vec4(0)) //East
+    if (normal.x > 0.9 && east != vec4(0)) //East
     {
-        col = texture(Sampler0, (eSide.xy + eSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (east.xy + east.zw * box.xy) / texSize);
     }
-    else if (normal.x < -0.9 && wSide != vec4(0)) //West
+    else if (normal.x < -0.9 && west != vec4(0)) //West
     {
-        col = texture(Sampler0, (wSide.xy + wSide.zw * vec2(1 - box.x, box.y)) / texSize);
+        col = texture(Sampler0, (west.xy + west.zw * vec2(1 - box.x, box.y)) / texSize);
     }
-    else if (normal.z > 0.9 && sSide != vec4(0)) //South
+    else if (normal.z > 0.9 && south != vec4(0)) //South
     {
-        col = texture(Sampler0, (sSide.xy + sSide.zw * vec2(1 - box.x, box.y)) / texSize);
+        col = texture(Sampler0, (south.xy + south.zw * vec2(1 - box.x, box.y)) / texSize);
     }
-    else if (normal.z < -0.9 && nSide != vec4(0)) //North
+    else if (normal.z < -0.9 && north != vec4(0)) //North
     {
-        col = texture(Sampler0, (nSide.xy + nSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (north.xy + north.zw * box.xy) / texSize);
     }
-    else if (normal.y < -0.9 && uSide != vec4(0)) //Up
+    else if (normal.y < -0.9 && up != vec4(0)) //Up
     {
-        col = texture(Sampler0, (uSide.xy + uSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (up.xy + up.zw * box.xy) / texSize);
     }
-    else if (normal.y > 0.9 && dSide != vec4(0)) //Down
+    else if (normal.y > 0.9 && down != vec4(0)) //Down
     {
-        col = texture(Sampler0, (dSide.xy + dSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (down.xy + down.zw * box.xy) / texSize);
     }
 
     col = minecraft_mix_light(Light0_Direction, Light1_Direction, normalize(TBN * normal), col);
@@ -213,7 +213,7 @@ vec4 sBox(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4
     return col;
 }
 
-vec4 sBoxExt(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4 dSide, vec4 uSide, vec4 nSide, vec4 eSide, vec4 sSide, vec4 wSide)
+vec4 sBoxExt(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, vec4 down, vec4 up, vec4 north, vec4 east, vec4 south, vec4 west)
 {
     vec2 texSize = textureSize(Sampler0, 0);
     vec3 normal = vec3(0);
@@ -225,29 +225,29 @@ vec4 sBoxExt(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, v
 
     vec4 col = vec4(0);
 
-    if (normal.x > 0.9 && eSide != vec4(0)) //East
+    if (normal.x > 0.9 && east != vec4(0)) //East
     {
-        col = texture(Sampler0, (eSide.xy + eSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (east.xy + east.zw * box.xy) / texSize);
     }
-    else if (normal.x < -0.9 && wSide != vec4(0)) //West
+    else if (normal.x < -0.9 && west != vec4(0)) //West
     {
-        col = texture(Sampler0, (wSide.xy + wSide.zw * vec2(1 - box.x, box.y)) / texSize);
+        col = texture(Sampler0, (west.xy + west.zw * vec2(1 - box.x, box.y)) / texSize);
     }
-    else if (normal.z > 0.9 && sSide != vec4(0)) //South
+    else if (normal.z > 0.9 && south != vec4(0)) //South
     {
-        col = texture(Sampler0, (sSide.xy + sSide.zw * vec2(1 - box.x, box.y)) / texSize);
+        col = texture(Sampler0, (south.xy + south.zw * vec2(1 - box.x, box.y)) / texSize);
     }
-    else if (normal.z < -0.9 && nSide != vec4(0)) //North
+    else if (normal.z < -0.9 && north != vec4(0)) //North
     {
-        col = texture(Sampler0, (nSide.xy + nSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (north.xy + north.zw * box.xy) / texSize);
     }
-    else if (normal.y < -0.9 && uSide != vec4(0)) //Up
+    else if (normal.y < -0.9 && up != vec4(0)) //Up
     {
-        col = texture(Sampler0, (uSide.xy + uSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (up.xy + up.zw * box.xy) / texSize);
     }
-    else if (normal.y > 0.9 && dSide != vec4(0)) //Down
+    else if (normal.y > 0.9 && down != vec4(0)) //Down
     {
-        col = texture(Sampler0, (dSide.xy + dSide.zw * box.xy) / texSize);
+        col = texture(Sampler0, (down.xy + down.zw * box.xy) / texSize);
     }
 
     if (col.a < 0.1)
@@ -255,29 +255,29 @@ vec4 sBoxExt(vec3 ro, vec3 rd, vec3 size, mat3 TBN, vec4 color, inout float T, v
         box = boxIntersectInv(ro, rd, size, normal);
 
 
-        if (normal.x > 0.9 && eSide != vec4(0)) //East
+        if (normal.x > 0.9 && east != vec4(0)) //East
         {
-            col = texture(Sampler0, (eSide.xy + eSide.zw * box.xy) / texSize);
+            col = texture(Sampler0, (east.xy + east.zw * box.xy) / texSize);
         }
-        else if (normal.x < -0.9 && wSide != vec4(0)) //West
+        else if (normal.x < -0.9 && west != vec4(0)) //West
         {
-            col = texture(Sampler0, (wSide.xy + wSide.zw * vec2(1 - box.x, box.y)) / texSize);
+            col = texture(Sampler0, (west.xy + west.zw * vec2(1 - box.x, box.y)) / texSize);
         }
-        else if (normal.z > 0.9 && sSide != vec4(0)) //South
+        else if (normal.z > 0.9 && south != vec4(0)) //South
         {
-            col = texture(Sampler0, (sSide.xy + sSide.zw * vec2(1 - box.x, box.y)) / texSize);
+            col = texture(Sampler0, (south.xy + south.zw * vec2(1 - box.x, box.y)) / texSize);
         }
-        else if (normal.z < -0.9 && nSide != vec4(0)) //North
+        else if (normal.z < -0.9 && north != vec4(0)) //North
         {
-            col = texture(Sampler0, (nSide.xy + nSide.zw * box.xy) / texSize);
+            col = texture(Sampler0, (north.xy + north.zw * box.xy) / texSize);
         }
-        else if (normal.y < -0.9 && uSide != vec4(0)) //Up
+        else if (normal.y < -0.9 && up != vec4(0)) //Up
         {
-            col = texture(Sampler0, (uSide.xy + uSide.zw * box.xy) / texSize);
+            col = texture(Sampler0, (up.xy + up.zw * box.xy) / texSize);
         }
-        else if (normal.y > 0.9 && dSide != vec4(0)) //Down
+        else if (normal.y > 0.9 && down != vec4(0)) //Down
         {
-            col = texture(Sampler0, (dSide.xy + dSide.zw * box.xy) / texSize);
+            col = texture(Sampler0, (down.xy + down.zw * box.xy) / texSize);
         }
     }
 
