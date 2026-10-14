@@ -70,12 +70,12 @@ vec3 triIntersect( in vec3 ro, in vec3 rd, in vec3 v0, in vec3 v1, in vec3 v2 )
 
 vec2 texPos(vec3 pos, vec3 normal)
 {
-    if (abs(outNormal.x) > 0.9)
-        return pos.zy * vec2(sign(outNormal.x), 1);
-    else if (abs(outNormal.y) > 0.9)
+    if (abs(normal.x) > 0.9)
+        return pos.zy * vec2(sign(normal.x), 1);
+    else if (abs(normal.y) > 0.9)
         return pos.xz * vec2(1, -1);
-    else if (abs(outNormal.z) > 0.9)
-        return pos.xy * vec2(-sign(outNormal.z), 1);
+    else if (abs(normal.z) > 0.9)
+        return pos.xy * vec2(-sign(normal.z), 1);
     return vec2(0);
 }
 
