@@ -1,33 +1,46 @@
 {
 	"pack": {
-		"pack_format": 15,
-		"supported_formats": [ 15, 63 ],
 		"description":
 		{
 			"text":"By DartCat25",
 			"bold": false
-		}
+		},
+		"min_format": 15,
+		"max_format": 84,
+
+		"pack_format": 84,
+		"supported_formats": [ 15, 84 ]
 	},
-	"overlays":
-	{
-		"entries":
-		[
+	"overlays": {
+		"entries": [		
 			{
 				"directory": "1.20.5",
-				"formats": [ 25, 1000 ]
-			},
-			{
+				"formats": [ 25, 25 ]
+			},{
 				"directory": "1.21.2",
-				"formats": [ 42, 1000 ]
+				"formats": [ 42, 49 ]
 			},
 			{
 				"directory": "1.21.5",
-				"formats": [ 50, 1000 ]
+				"formats": [ 50, 62 ]
 			},
 			{
 				"directory": "1.21.6",
-				"formats": [ 63, 1000 ]
+				"formats": [ 63, 64 ]
+			},	
+			{
+				"directory": "1.21.11",
+				"min_format": 65,
+				"max_format": 75,
+				"formats": [ 65, 75 ]
+			},
+			{
+				"directory": "26.1",
+				"min_format": 84,
+				"max_format": 84,
+				"formats": [ 84, 84 ]
 			}
 		]
 	}
 }
+
